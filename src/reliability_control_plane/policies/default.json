@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "rules": [
+    {
+      "id": "latency-sustained",
+      "title": "Sustained request latency",
+      "signal_name": "latency_ms",
+      "kind": "metric",
+      "operator": "gt",
+      "threshold": 750,
+      "severity": "high",
+      "minimum_occurrences": 3,
+      "window_seconds": 120,
+      "description": "Request latency repeatedly exceeded the service objective.",
+      "recommendation": "Inspect dependency timings, queue depth, and connection-pool saturation.",
+      "labels": ["slo", "latency"]
+    },
+    {
+      "id": "service-error-burst",
+      "title": "Service error burst",
+      "signal_name": "service_error",
+      "kind": "log",
+      "operator": "contains",
+      "threshold": "timeout",
+      "severity": "high",
+      "minimum_occurrences": 3,
+      "window_seconds": 120,
+      "description": "Repeated timeout errors were observed.",
+      "recommendation": "Compare the newest errors with the last deployment and downstream health.",
+      "labels": ["logs", "dependency"]
+    },
+    {
+      "id": "ran-prb-saturation",
+      "title": "RAN downlink saturation",
+      "signal_name": "dl_prb_utilization_pct",
+      "kind": "metric",
+      "operator": "gt",
+      "threshold": 90,
+      "severity": "high",
+      "minimum_occurrences": 2,
+      "window_seconds": 90,
+      "description": "Downlink PRB utilization is near saturation.",
+      "recommendation": "Inspect cell load, traffic steering, and neighbouring-cell capacity.",
+      "labels": ["5g", "oran", "capacity"]
+    },
+    {
+      "id": "ran-packet-loss",
+      "title": "Elevated packet loss",
+      "signal_name": "packet_loss_pct",
+      "kind": "metric",
+      "operator": "gt",
+      "threshold": 2,
+      "severity": "medium",
+      "minimum_occurrences": 2,
+      "window_seconds": 90,
+      "description": "Packet loss exceeded the reliability threshold.",
+      "recommendation": "Check transport congestion, radio quality, and retransmission rates.",
+      "labels": ["5g", "reliability"]
+    },
+    {
+      "id": "ran-weak-sinr",
+      "title": "Weak radio quality",
+      "signal_name": "sinr_db",
+      "kind": "metric",
+      "operator": "lt",
+      "threshold": 5,
+      "severity": "medium",
+      "minimum_occurrences": 2,
+      "window_seconds": 90,
+      "description": "SINR remained below the target.",
+      "recommendation": "Inspect interference, coverage, UE distribution, and handover behaviour.",
+      "labels": ["5g", "radio"]
+    },
+    {
+      "id": "public-admin-exposure",
+      "title": "Public administration exposure",
+      "signal_name": "public_admin_exposure",
+      "kind": "policy",
+      "operator": "truthy",
+      "threshold": true,
+      "severity": "critical",
+      "minimum_occurrences": 1,
+      "window_seconds": 300,
+      "description": "An administrative interface is reachable from the public internet.",
+      "recommendation": "Restrict administration to a VPN, bastion, or trusted management network.",
+      "labels": ["security", "policy-as-code"]
+    },
+    {
+      "id": "auth-failure",
+      "title": "Suspicious authentication failure",
+      "signal_name": "auth_failure",
+      "kind": "log",
+      "operator": "contains",
+      "threshold": "root",
+      "severity": "medium",
+      "minimum_occurrences": 1,
+      "window_seconds": 300,
+      "description": "A privileged login failed from an untrusted network.",
+      "recommendation": "Review source addresses, rotate exposed credentials, and inspect audit logs.",
+      "labels": ["security", "identity"]
+    }
+  ]
+}

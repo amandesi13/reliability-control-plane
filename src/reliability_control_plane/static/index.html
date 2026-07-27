@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Reliability Control Plane operator dashboard for explainable incident correlation."
+    />
+    <meta name="theme-color" content="#0b0d0e" />
+    <title>Reliability Control Plane</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.js" defer></script>
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="brand" href="/" aria-label="Reliability Control Plane home">
+        <span class="brand-mark" aria-hidden="true">RCP</span>
+        <span>
+          <strong>Reliability Control Plane</strong>
+          <small>Telemetry to decision</small>
+        </span>
+      </a>
+
+      <div class="environment">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Demo environment</span>
+        <strong>Operational</strong>
+      </div>
+
+      <nav aria-label="Project links">
+        <a class="icon-button" href="/docs" title="OpenAPI documentation">
+          <i data-lucide="book-open" aria-hidden="true"></i>
+          <span class="sr-only">OpenAPI documentation</span>
+        </a>
+        <a
+          class="icon-button"
+          href="https://github.com/amandesi13/reliability-control-plane"
+          title="View source on GitHub"
+        >
+          <i data-lucide="github" aria-hidden="true"></i>
+          <span class="sr-only">View source on GitHub</span>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="command-bar" aria-labelledby="dashboard-title">
+        <div>
+          <p class="eyebrow">Live system picture</p>
+          <h1 id="dashboard-title">Decision-ready reliability signals</h1>
+          <p id="last-updated">Waiting for telemetry...</p>
+        </div>
+        <div class="scenario-controls">
+          <label for="scenario">Scenario</label>
+          <select id="scenario">
+            <option value="full-demo">Full incident landscape</option>
+            <option value="dependency-failure">Dependency failure</option>
+            <option value="ran-congestion">RAN congestion</option>
+            <option value="security-drift">Security drift</option>
+            <option value="healthy">Healthy baseline</option>
+          </select>
+          <button class="primary-button" id="run-scenario" type="button">
+            <i data-lucide="play" aria-hidden="true"></i>
+            Run scenario
+          </button>
+          <button class="icon-button" id="reset" type="button" title="Reset telemetry">
+            <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+            <span class="sr-only">Reset telemetry</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="metric-strip" aria-label="Reliability summary">
+        <article>
+          <span>Risk score</span>
+          <strong id="risk-score">--</strong>
+          <small id="risk-label">Awaiting data</small>
+        </article>
+        <article>
+          <span>Open incidents</span>
+          <strong id="incident-count">--</strong>
+          <small id="critical-count">-- critical</small>
+        </article>
+        <article>
+          <span>Error budget</span>
+          <strong id="error-budget">--</strong>
+          <small id="slo-status">99.9% SLO</small>
+        </article>
+        <article>
+          <span>Signal coverage</span>
+          <strong id="signal-count">--</strong>
+          <small id="service-count">-- services</small>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <div class="incident-queue">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Prioritized response</p>
+              <h2>Incident queue</h2>
+            </div>
+            <span id="policy-count">-- active policies</span>
+          </div>
+          <div class="incident-list" id="incident-list" role="list"></div>
+        </div>
+
+        <aside class="decision-panel" aria-labelledby="decision-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Explainable decision</p>
+              <h2 id="decision-title">Evidence trace</h2>
+            </div>
+            <span id="decision-score">Select an incident</span>
+          </div>
+          <div id="decision-content" class="empty-state">
+            <i data-lucide="scan-search" aria-hidden="true"></i>
+            <p>Choose an incident to inspect its evidence, correlation logic, and next actions.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="lower-grid">
+        <div class="signal-stream">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Evidence pipeline</p>
+              <h2>Recent signals</h2>
+            </div>
+            <span>Metrics · logs · policy</span>
+          </div>
+          <div class="signal-table" role="table" aria-label="Recent reliability signals">
+            <div class="table-row table-head" role="row">
+              <span role="columnheader">Time</span>
+              <span role="columnheader">Service</span>
+              <span role="columnheader">Signal</span>
+              <span role="columnheader">Value</span>
+            </div>
+            <div id="signal-rows"></div>
+          </div>
+        </div>
+
+        <div class="slo-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Service objective</p>
+              <h2>Error-budget health</h2>
+            </div>
+            <span id="slo-observed">-- observed</span>
+          </div>
+          <div class="budget-visual">
+            <div class="budget-ring" id="budget-ring">
+              <strong id="budget-ring-value">--</strong>
+              <span>remaining</span>
+            </div>
+            <div class="budget-copy">
+              <p>
+                The demo evaluates a <strong>99.9%</strong> availability target from request
+                outcomes in the active scenario.
+              </p>
+              <div class="legend">
+                <span><i class="legend-good"></i>Healthy</span>
+                <span><i class="legend-risk"></i>At risk</span>
+                <span><i class="legend-bad"></i>Exhausted</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
