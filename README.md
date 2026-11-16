@@ -3,7 +3,10 @@
 [![CI](https://github.com/amandesi13/reliability-control-plane/actions/workflows/ci.yml/badge.svg)](https://github.com/amandesi13/reliability-control-plane/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-operator%20API-009688)](https://fastapi.tiangolo.com/)
+[![demo](https://github.com/amandesi13/reliability-control-plane/actions/workflows/pages.yml/badge.svg)](https://amandesi13.github.io/reliability-control-plane/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+**[Live demo](https://amandesi13.github.io/reliability-control-plane/)**: the operator dashboard with the real policy and correlation engine running in your browser on Pyodide (WebAssembly). Pick a scenario and run it; no server involved.
 
 An explainable reliability-engineering platform that correlates **metrics**, **logs**, and
 **security-policy drift** into prioritized incidents. It combines the strongest ideas from my
@@ -101,6 +104,20 @@ curl -X POST http://localhost:8080/api/signals \
       "message": "SSH is reachable from 0.0.0.0/0"
     }]
   }'
+```
+
+## Browser demo
+
+The [live demo](https://amandesi13.github.io/reliability-control-plane/) is the same `static/` dashboard served from GitHub Pages. GitHub Pages has
+no server, so `web/pyodide-api.js` starts the control plane in Pyodide and answers the
+dashboard's `fetch("/api/...")` calls from `web/bridge.py`. The dashboard code itself is unchanged.
+`tests/test_web_bridge.py` replays the dashboard's calls against both the bridge and the FastAPI
+app and requires identical JSON, apart from ids and timestamps. The `demo` workflow builds the
+site with `python web/build_site.py` and deploys it on every push to `main`.
+
+```bash
+python web/build_site.py _site
+python -m http.server -d _site 8000   # http://localhost:8000
 ```
 
 ## Engineering quality
